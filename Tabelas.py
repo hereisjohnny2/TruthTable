@@ -119,6 +119,18 @@ def avaliarOperacoes(s, opp):
             prep = key[1]
             matriz[key] = [not i for i in matriz[prep]]
 
+        elif "-" in key:
+            index = key.index("-")
+            prepA = key[:index]
+            prepB = key[index+2:]
+            conditionalList = []
+            for i in range(len(matriz[prepA])):
+                if (matriz[prepA][i] == True and matriz[prepB][i] == False):
+                    conditionalList.append(False)
+                else:
+                    conditionalList.append(True)
+            matriz[key] = conditionalList   
+
         elif key[-2] == "^" or key[-3] == "^":
             
             if key[-2] == "~":
@@ -147,10 +159,8 @@ def avaliarOperacoes(s, opp):
                 orLista.append(matriz[prepA][i] or matriz[prepB][i])
             matriz[key] = orLista
 
-        elif "-" in key:
-            index = key.index("-")
-            prepA = key[:index]
-            prepB = key[index+2:]
+                
+
 
         
     printTabela(matriz)
