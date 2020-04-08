@@ -1,4 +1,8 @@
+#Truth Table Generator
 
+
+# Builds the table with the simple propositions (e.g. p, q, r,...).
+# It creates a dictionary which keys will be, for now, only the name of the propositions.
 def montarTabela(preps):
 
     colunas = len(preps)
@@ -27,6 +31,7 @@ def montarTabela(preps):
         k += 1
     return Tabela
 
+# prints out the table
 def printTabela(Tabela):
     for prep in Tabela:
         print(prep, end="\t\t")
@@ -36,7 +41,7 @@ def printTabela(Tabela):
             print(Tabela[i][linha], end="\t\t")
         print('\n')
 
-
+# collects the preposition in the logical statement
 def coletarPreposicoes(s):
     listaPreps = 'p q r s t'.split(" ")
     preps = []
@@ -46,7 +51,57 @@ def coletarPreposicoes(s):
                 preps.append(s[i])
     return preps
 
+# Checks for "Not" operations and returns a list of propositions
+def checkNegacao(prop, opp):
+    i = 0
+    while(i < len(prop)):
+        if prop[i] == "~":
+            prep = prop[i+1]
+            opp.append(f"~{prep}")
+            prop[i] = f"~{prep}"
+            prop.pop(i+1)
+        i+=1
+    return prop
 
+def checkAndOr(prop, opp):
+    i = 0
+    while(i < len(prop)):
+        if prop[i] == "^" or prop[i] == "v":
+            prepA = prop[i-1]
+            prepB = prop[i+1]
+            opp.append(f"{prepA}{prop[i]}{prepB}")
+            prop.insert(i+2, f"{prepA}{prop[i]}{prepB}")
+        i+=1
+
+    return prop
+
+
+def operacoes(s):
+    props = [i for i in s]
+    opp = []
+
+    if "-" in props:
+        index = props.index("-")
+        propsA = props[:index]
+        propsB = props[index+2:]
+        props = []
+        props.append(propsA) 
+        props.append(propsB) 
+
+        for prop in props:
+            prop = checkNegacao(prop, opp)
+            prop = checkAndOr(prop, opp)
+        
+        opp.append(f"{s[:index]}->{s[index+2:]}")
+
+    else:
+        props = checkNegacao(props, opp)
+        props = checkAndOr(props, opp)
+
+    return opp
+
+
+# evaluates the oparatinos in side the logical statements
 def avaliarOperacoes(s, opp):
 
     preps = coletarPreposicoes(s)
@@ -99,54 +154,6 @@ def avaliarOperacoes(s, opp):
 
         
     printTabela(matriz)
-
-def checkNegacao(prop, opp):
-    i = 0
-    while(i < len(prop)):
-        if prop[i] == "~":
-            prep = prop[i+1]
-            opp.append(f"~{prep}")
-            prop[i] = f"~{prep}"
-            prop.pop(i+1)
-        i+=1
-    return prop
-
-def checkAndOr(prop, opp):
-    i = 0
-    while(i < len(prop)):
-        if prop[i] == "^" or prop[i] == "v":
-            prepA = prop[i-1]
-            prepB = prop[i+1]
-            opp.append(f"{prepA}{prop[i]}{prepB}")
-            prop.insert(i+2, f"{prepA}{prop[i]}{prepB}")
-        i+=1
-
-    return prop
-
-
-def operacoes(s):
-    props = [i for i in s]
-    opp = []
-
-    if "-" in props:
-        index = props.index("-")
-        propsA = props[:index]
-        propsB = props[index+2:]
-        props = []
-        props.append(propsA) 
-        props.append(propsB) 
-
-        for prop in props:
-            prop = checkNegacao(prop, opp)
-            prop = checkAndOr(prop, opp)
-        
-        opp.append(f"{s[:index]}->{s[index+2:]}")
-
-    else:
-        props = checkNegacao(props, opp)
-        props = checkAndOr(props, opp)
-
-    return opp
 
     
 if __name__ == "__main__":
