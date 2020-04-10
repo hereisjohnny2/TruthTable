@@ -76,9 +76,40 @@ def checkAndOr(prop, opp):
     return prop
 
 
+def buscaParenteses(props):
+
+    listaParenteses = []
+    
+    for i in range(len(props)):
+        if props[i] == "(":
+            par = []
+            par.append(i)
+            listaParenteses.append(par)
+            ponteiro_fecha = 1
+            jindex = i + 1
+            while (jindex < len(props)):
+                if props[jindex] == "(":
+                    ponteiro_fecha += 1
+                    jindex += 1
+                elif props[jindex] == ")":
+                    ponteiro_fecha -= 1    
+                    if ponteiro_fecha == 0:
+                        par.append(jindex)
+                        jindex = len(props)
+                    else:
+                        jindex += 1
+                else:
+                    jindex += 1
+
+    listaParenteses.reverse()
+    return listaParenteses
+
 def operacoes(s):
     props = [i for i in s]
     opp = []
+
+    listaParenteses = buscaParenteses(props) 
+    print(listaParenteses)
 
     if "-" in props:
         index = props.index("-")
@@ -131,7 +162,7 @@ def avaliarOperacoes(s, opp):
                     conditionalList.append(True)
             matriz[key] = conditionalList   
 
-        elif key[-2] == "^" or key[-3] == "^":
+        elif "^" in key:
             
             if key[-2] == "~":
                 prepA = key[:-3]
@@ -159,14 +190,12 @@ def avaliarOperacoes(s, opp):
                 orLista.append(matriz[prepA][i] or matriz[prepB][i])
             matriz[key] = orLista
 
-                
-
-
-        
     printTabela(matriz)
 
     
 if __name__ == "__main__":
-    logAfirm = input('Digite a afirmação lógica: ')
+    #logAfirm = input('Digite a afirmação lógica: ')
+    logAfirm = "~pvq->q^r"
     operacoes = operacoes(logAfirm)
+    print(operacoes)
     avaliarOperacoes(logAfirm, operacoes)
